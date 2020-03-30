@@ -46,7 +46,6 @@ export default () => {
 
   return (
     <section>
-      <p>Press the button to subscribe and get literally nothing in return!</p>
       {Subscriptions.map(service => <Subscription service={service} status={subState[service].state} message={subState[service].message} />)}
     </section>
   );
