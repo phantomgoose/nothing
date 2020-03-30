@@ -5,8 +5,14 @@ import './App.css';
 interface SubscriptionStatus {
   [service: string]: {
     state: SubState;
-    updateState: React.Dispatch<any>;
+    message: string;
+    updateState: React.Dispatch<SubState>;
+    updateMessage: React.Dispatch<string>;
   }
+}
+
+interface ServiceResponse {
+  data: string;
 }
 
 const Subscriptions: string[] = ['node', 'go'];
@@ -14,19 +20,24 @@ const Subscriptions: string[] = ['node', 'go'];
 export default () => {
   const subState = Subscriptions.reduce((map, service) => {
     const [state, updateState] = useState(SubState.None);
-    return { ...map, [service]: { state, updateState } };
+    const [message, updateMessage] = useState('');
+    return { ...map, [service]: { state, updateState, message, updateMessage } };
   }, {} as SubscriptionStatus);
 
   useEffect(() => {
     (async function makeApiCall() {
       for (const service of Subscriptions) {
-        const { state, updateState } = subState[service];
+        const { state, updateState, updateMessage } = subState[service];
         if (state === SubState.None) {
           updateState(SubState.InProgress);
           console.log(`Fetching sub status for ${service}`);
           setTimeout(async () => {
-            const res = await fetch(`/${service}/api/test`);
+            const res = await fetch(`/api/${service}/test`);
             updateState(res.ok ? SubState.Done : SubState.Error);
+            if (!res.ok) return;
+
+            const jsonResponse: ServiceResponse = await res.json();
+            updateMessage(jsonResponse.data);
           }, Math.floor(Math.random() * 2000 + 1000));
         }
       }
@@ -36,7 +47,7 @@ export default () => {
   return (
     <section>
       <p>Press the button to subscribe and get literally nothing in return!</p>
-      {Subscriptions.map(service => <Subscription service={service} status={subState[service].state} />)}
+      {Subscriptions.map(service => <Subscription service={service} status={subState[service].state} message={subState[service].message} />)}
     </section>
   );
 }
