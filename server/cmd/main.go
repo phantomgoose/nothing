@@ -4,16 +4,22 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"nothing/api"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
-	"nothing/api"
 )
 
-const Address = ":80"
-
 func main() {
+	port := os.Getenv("PORT")
+	defaultPort := "8080"
+	var Address string
+	if port != "" {
+		Address = fmt.Sprint(":", port)
+	} else {
+		Address = fmt.Sprint(":", defaultPort)
+	}
 	server := &http.Server{Addr: Address}
 	errs := make(chan error, 1)
 
