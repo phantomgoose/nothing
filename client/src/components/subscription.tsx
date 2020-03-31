@@ -1,6 +1,6 @@
 import React from 'react';
 
-export enum SubState {
+export enum SubscriptionState {
   None,
   InProgress,
   Done,
@@ -9,12 +9,12 @@ export enum SubState {
 
 export interface SubscriptionProps {
   service: string;
-  status: SubState;
+  status: SubscriptionState;
   message: string;
 }
 
 export default (props: SubscriptionProps) => <div>
   <p>Backend: {props.service}</p>
-  <p>Status: {SubState[props.status]}</p>
+  <p>Status: {SubscriptionState[props.status]}</p>
   <p>Message: {props.message}</p>
 </div>

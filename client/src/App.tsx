@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Subscription, { SubState } from './components/subscription';
+import Subscription, { SubscriptionState } from './components/subscription';
 import './App.css';
 
-interface SubscriptionStatus {
+interface SubscriptionMap {
   [service: string]: {
-    state: SubState;
+    state: SubscriptionState;
     message: string;
-    updateState: React.Dispatch<SubState>;
+    updateState: React.Dispatch<SubscriptionState>;
     updateMessage: React.Dispatch<string>;
   }
 }
@@ -15,30 +15,28 @@ interface ServiceResponse {
   data: string;
 }
 
-const Subscriptions: string[] = ['node', 'go'];
+const Services: string[] = ['node', 'go'];
 
 export default () => {
-  const subState = Subscriptions.reduce((map, service) => {
-    const [state, updateState] = useState(SubState.None);
+  const subState = Services.reduce((map, service) => {
+    const [state, updateState] = useState(SubscriptionState.None);
     const [message, updateMessage] = useState('');
     return { ...map, [service]: { state, updateState, message, updateMessage } };
-  }, {} as SubscriptionStatus);
+  }, {} as SubscriptionMap);
 
   useEffect(() => {
     (async function makeApiCall() {
-      for (const service of Subscriptions) {
+      for (const service of Services) {
         const { state, updateState, updateMessage } = subState[service];
-        if (state === SubState.None) {
-          updateState(SubState.InProgress);
+        if (state === SubscriptionState.None) {
+          updateState(SubscriptionState.InProgress);
           console.log(`Fetching sub status for ${service}`);
-          setTimeout(async () => {
-            const res = await fetch(`/api/${service}/test`);
-            updateState(res.ok ? SubState.Done : SubState.Error);
-            if (!res.ok) return;
+          const res = await fetch(`/api/${service}/test`);
+          updateState(res.ok ? SubscriptionState.Done : SubscriptionState.Error);
+          if (!res.ok) return;
 
-            const jsonResponse: ServiceResponse = await res.json();
-            updateMessage(jsonResponse.data);
-          }, Math.floor(Math.random() * 2000 + 1000));
+          const jsonResponse: ServiceResponse = await res.json();
+          updateMessage(jsonResponse.data);
         }
       }
     })();
@@ -46,7 +44,7 @@ export default () => {
 
   return (
     <section>
-      {Subscriptions.map(service => <Subscription service={service} status={subState[service].state} message={subState[service].message} />)}
+      {Services.map(service => <Subscription key={service} service={service} status={subState[service].state} message={subState[service].message} />)}
     </section>
   );
 }
