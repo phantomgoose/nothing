@@ -12,14 +12,7 @@ import (
 )
 
 func main() {
-	port := os.Getenv("PORT")
-	defaultPort := "8080"
-	var Address string
-	if port != "" {
-		Address = fmt.Sprint(":", port)
-	} else {
-		Address = fmt.Sprint(":", defaultPort)
-	}
+	Address := ":80"
 	server := &http.Server{Addr: Address}
 	errs := make(chan error, 1)
 
@@ -28,7 +21,7 @@ func main() {
 		http.Handle("/", fs)
 		http.Handle("/api/go/test", api.Handler())
 
-		fmt.Printf("Starting server on http://localhost%v", Address)
+		fmt.Printf("Starting server on port %v", Address)
 		errs <- server.ListenAndServe()
 	}()
 
