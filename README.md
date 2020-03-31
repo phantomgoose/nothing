@@ -10,8 +10,7 @@ The resulting container image was ultimately pushed to AWS Elastic Container Rep
 
 ### Prereqs
 
-node, Docker, Go
-AWS CLI for deployment to AWS
+node, Docker, Go, AWS CLI (only for deployment to AWS)
 
 ### Docker
 
