@@ -24,7 +24,7 @@ func main() {
 	errs := make(chan error, 1)
 
 	go func() {
-		fs := http.FileServer(http.Dir("../../client/build"))
+		fs := http.FileServer(http.Dir("../build"))
 		http.Handle("/", fs)
 		http.Handle("/api/go/test", api.Handler())
 
