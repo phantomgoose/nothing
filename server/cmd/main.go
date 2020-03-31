@@ -11,7 +11,7 @@ import (
 	"nothing/api"
 )
 
-const Address = ":8090"
+const Address = ":80"
 
 func main() {
 	server := &http.Server{Addr: Address}
